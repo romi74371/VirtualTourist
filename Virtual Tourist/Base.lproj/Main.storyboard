@@ -44,7 +44,7 @@
         <!--Album View Controller-->
         <scene sceneID="Xps-jb-DIy">
             <objects>
-                <viewController id="AfX-Fl-Nax" userLabel="Album View Controller" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="AlbumViewController" id="AfX-Fl-Nax" userLabel="Album View Controller" customClass="AlbumViewController" customModule="VirtualTourist" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="OuX-es-bEV"/>
                         <viewControllerLayoutGuide type="bottom" id="7Gs-PS-9hz"/>

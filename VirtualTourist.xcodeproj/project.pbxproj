@@ -16,6 +16,7 @@
 		F349C2471BEE6AB3007350CB /* Virtual_TouristTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F349C2461BEE6AB3007350CB /* Virtual_TouristTests.swift */; };
 		F349C2521BEE6AB3007350CB /* Virtual_TouristUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F349C2511BEE6AB3007350CB /* Virtual_TouristUITests.swift */; };
 		F349C2601BEE8E2F007350CB /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F349C25F1BEE8E2F007350CB /* MapKit.framework */; };
+		F349C2621BEE9B22007350CB /* AlbumViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F349C2611BEE9B22007350CB /* AlbumViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -51,6 +52,7 @@
 		F349C2511BEE6AB3007350CB /* Virtual_TouristUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Virtual_TouristUITests.swift; sourceTree = "<group>"; };
 		F349C2531BEE6AB3007350CB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F349C25F1BEE8E2F007350CB /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
+		F349C2611BEE9B22007350CB /* AlbumViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlbumViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -105,6 +107,7 @@
 			children = (
 				F349C22E1BEE6AB2007350CB /* AppDelegate.swift */,
 				F349C2301BEE6AB2007350CB /* MapViewController.swift */,
+				F349C2611BEE9B22007350CB /* AlbumViewController.swift */,
 				F349C2321BEE6AB2007350CB /* Main.storyboard */,
 				F349C2381BEE6AB2007350CB /* Assets.xcassets */,
 				F349C23A1BEE6AB2007350CB /* LaunchScreen.storyboard */,
@@ -266,6 +269,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F349C2621BEE9B22007350CB /* AlbumViewController.swift in Sources */,
 				F349C2311BEE6AB2007350CB /* MapViewController.swift in Sources */,
 				F349C2371BEE6AB2007350CB /* Virtual_Tourist.xcdatamodeld in Sources */,
 				F349C22F1BEE6AB2007350CB /* AppDelegate.swift in Sources */,

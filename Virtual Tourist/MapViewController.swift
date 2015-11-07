@@ -17,39 +17,26 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         super.viewDidLoad()
         
         self.mapView.delegate = self
+        
+        let longPress = UILongPressGestureRecognizer(target: self, action: "action:")
+        longPress.minimumPressDuration = 1.0
+        mapView.addGestureRecognizer(longPress)
     }
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
+    func action(gestureRecognizer:UIGestureRecognizer) {
+        var touchPoint = gestureRecognizer.locationInView(self.mapView)
+        var newCoord:CLLocationCoordinate2D = mapView.convertPoint(touchPoint, toCoordinateFromView: self.mapView)
+        
+        var newAnotation = MKPointAnnotation()
+        newAnotation.coordinate = newCoord
+        mapView.addAnnotation(newAnotation)
     }
 
     // MARK: - MKMapViewDelegate
     
-    func mapView(mapView: MKMapView, viewForAnnotation annotation: MKAnnotation) -> MKAnnotationView? {
-        
-        let reuseId = "pin"
-        
-        var pinView = mapView.dequeueReusableAnnotationViewWithIdentifier(reuseId) as? MKPinAnnotationView
-        
-        if pinView == nil {
-            pinView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: reuseId)
-            pinView!.canShowCallout = true
-            pinView!.pinTintColor = MKPinAnnotationView.greenPinColor()
-            pinView!.rightCalloutAccessoryView = UIButton(type: .DetailDisclosure)
-        }
-        else {
-            pinView!.annotation = annotation
-        }
-        
-        return pinView
-    }
-    
-    func mapView(mapView: MKMapView, annotationView: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
-        
-        if control == annotationView.rightCalloutAccessoryView {
-            let app = UIApplication.sharedApplication()
-            app.openURL(NSURL(string: annotationView.annotation!.subtitle!!)!)
-        }
+    func mapView(mapView: MKMapView, didSelectAnnotationView view: MKAnnotationView) {
+        let controller = self.storyboard!.instantiateViewControllerWithIdentifier("AlbumViewController") as! AlbumViewController
+        self.navigationController!.pushViewController(controller, animated: true)
     }
 }
 
