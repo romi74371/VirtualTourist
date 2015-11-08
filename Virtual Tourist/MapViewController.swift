@@ -20,6 +20,8 @@ class MapViewController: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
     let MapSpanLatitudeDeltaKey = "map.span.latitudeDelta"
     let MapSpanLongitudeDeltaKey = "map.span.longitudeDelta"
     
+    var pinInFocus: Pin?
+    
     @IBOutlet weak var mapView: MKMapView!
 
     override func viewDidLoad() {
@@ -48,17 +50,29 @@ class MapViewController: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
         let touchPoint = gestureRecognizer.locationInView(self.mapView)
         let newCoord:CLLocationCoordinate2D = mapView.convertPoint(touchPoint, toCoordinateFromView: self.mapView)
         
-        // Debugging output
-        print("new pin added, latitude: \(newCoord.latitude), id: \(newCoord.longitude)")
+        switch(gestureRecognizer.state){
+            case UIGestureRecognizerState.Began:
+                var locationDictionary = [String : AnyObject]()
+                locationDictionary[Pin.Keys.Latitude] = newCoord.latitude
+                locationDictionary[Pin.Keys.Longitude] = newCoord.longitude
+                self.pinInFocus = Pin(dictionary: locationDictionary, context: sharedContext)
+                mapView.addAnnotation(self.pinInFocus!)
+            case UIGestureRecognizerState.Changed:
+                self.pinInFocus!.setCoordinate(newCoord)
+            case UIGestureRecognizerState.Ended:
+                // Debugging output
+                print("new pin added, latitude: \(newCoord.latitude), id: \(newCoord.longitude)")
+                CoreDataStackManager.sharedInstance().saveContext()
+            default:
+                return
+            
+        }
+        
         
         // save the pin location
-        var locationDictionary = [String : AnyObject]()
-        locationDictionary[Pin.Keys.Latitude] = newCoord.latitude
-        locationDictionary[Pin.Keys.Longitude] = newCoord.longitude
-        let pin = Pin(dictionary: locationDictionary, context: sharedContext)
-        mapView.addAnnotation(pin)
         
-        CoreDataStackManager.sharedInstance().saveContext()
+        
+        
     }
     
     // MARK: - Core Data Convenience. This will be useful for fetching. And for adding and saving objects as well.
@@ -84,13 +98,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
 
     // MARK: - MKMapViewDelegate
     
-    func mapView(mapView: MKMapView, didSelectAnnotationView view: MKAnnotationView) {
-        //let controller = self.storyboard!.instantiateViewControllerWithIdentifier("AlbumViewController") as! AlbumViewController
-        //self.navigationController!.pushViewController(controller, animated: true)
-    }
-    
     func mapView(mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
-        print ("test")
         if control == view.rightCalloutAccessoryView {
             let controller = self.storyboard!.instantiateViewControllerWithIdentifier("AlbumViewController") as! AlbumViewController
             self.navigationController!.pushViewController(controller, animated: true)
