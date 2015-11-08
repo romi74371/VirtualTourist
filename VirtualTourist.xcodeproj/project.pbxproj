@@ -17,6 +17,8 @@
 		F349C2521BEE6AB3007350CB /* Virtual_TouristUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F349C2511BEE6AB3007350CB /* Virtual_TouristUITests.swift */; };
 		F349C2601BEE8E2F007350CB /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F349C25F1BEE8E2F007350CB /* MapKit.framework */; };
 		F349C2621BEE9B22007350CB /* AlbumViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F349C2611BEE9B22007350CB /* AlbumViewController.swift */; };
+		F349C2671BEEAA28007350CB /* CoreDataStackManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F349C2661BEEAA28007350CB /* CoreDataStackManager.swift */; };
+		F349C2691BEEAAB9007350CB /* Pin.swift in Sources */ = {isa = PBXBuildFile; fileRef = F349C2681BEEAAB9007350CB /* Pin.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -53,6 +55,8 @@
 		F349C2531BEE6AB3007350CB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F349C25F1BEE8E2F007350CB /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		F349C2611BEE9B22007350CB /* AlbumViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlbumViewController.swift; sourceTree = "<group>"; };
+		F349C2661BEEAA28007350CB /* CoreDataStackManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreDataStackManager.swift; sourceTree = "<group>"; };
+		F349C2681BEEAAB9007350CB /* Pin.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Pin.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -105,9 +109,11 @@
 		F349C22D1BEE6AB2007350CB /* VirtualTourist */ = {
 			isa = PBXGroup;
 			children = (
+				F349C2651BEEA25E007350CB /* Model */,
+				F349C2641BEEA24A007350CB /* View */,
+				F349C2631BEEA207007350CB /* Controller */,
 				F349C22E1BEE6AB2007350CB /* AppDelegate.swift */,
-				F349C2301BEE6AB2007350CB /* MapViewController.swift */,
-				F349C2611BEE9B22007350CB /* AlbumViewController.swift */,
+				F349C2661BEEAA28007350CB /* CoreDataStackManager.swift */,
 				F349C2321BEE6AB2007350CB /* Main.storyboard */,
 				F349C2381BEE6AB2007350CB /* Assets.xcassets */,
 				F349C23A1BEE6AB2007350CB /* LaunchScreen.storyboard */,
@@ -136,6 +142,30 @@
 			);
 			name = VirtualTouristUITests;
 			path = "Virtual TouristUITests";
+			sourceTree = "<group>";
+		};
+		F349C2631BEEA207007350CB /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				F349C2301BEE6AB2007350CB /* MapViewController.swift */,
+				F349C2611BEE9B22007350CB /* AlbumViewController.swift */,
+			);
+			name = Controller;
+			sourceTree = "<group>";
+		};
+		F349C2641BEEA24A007350CB /* View */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = View;
+			sourceTree = "<group>";
+		};
+		F349C2651BEEA25E007350CB /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				F349C2681BEEAAB9007350CB /* Pin.swift */,
+			);
+			name = Model;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -272,6 +302,8 @@
 				F349C2621BEE9B22007350CB /* AlbumViewController.swift in Sources */,
 				F349C2311BEE6AB2007350CB /* MapViewController.swift in Sources */,
 				F349C2371BEE6AB2007350CB /* Virtual_Tourist.xcdatamodeld in Sources */,
+				F349C2691BEEAAB9007350CB /* Pin.swift in Sources */,
+				F349C2671BEEAA28007350CB /* CoreDataStackManager.swift in Sources */,
 				F349C22F1BEE6AB2007350CB /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
