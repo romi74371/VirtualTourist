@@ -22,6 +22,8 @@ class Pin : NSManagedObject, MKAnnotation {
     @NSManaged var latitude: Double
     @NSManaged var longitude: Double
     
+    var title: String? = "View album"
+    
     override init(entity: NSEntityDescription, insertIntoManagedObjectContext context: NSManagedObjectContext?) {
         super.init(entity: entity, insertIntoManagedObjectContext: context)
     }
@@ -39,5 +41,12 @@ class Pin : NSManagedObject, MKAnnotation {
     
     var coordinate: CLLocationCoordinate2D {
         return CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+    }
+    
+    func setCoordinate(newCoordinate: CLLocationCoordinate2D) {
+        willChangeValueForKey("coordinate")
+        self.latitude = newCoordinate.latitude
+        self.longitude = newCoordinate.longitude
+        didChangeValueForKey("coordinate")
     }
 }

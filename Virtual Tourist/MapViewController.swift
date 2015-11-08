@@ -6,29 +6,39 @@
 //  Copyright © 2015 Roman Hauptvogel. All rights reserved.
 //
 
+import Foundation
 import UIKit
 import MapKit
 import CoreData
 
 class MapViewController: UIViewController, MKMapViewDelegate, NSFetchedResultsControllerDelegate {
     
+    // Map region keys for NSUserDefaults
+    let MapSavedRegionExists = "map.savedRegionExists"
+    let MapCenterLatitudeKey = "map.center.latitude"
+    let MapCenterLongitudeKey = "map.center.longitude"
+    let MapSpanLatitudeDeltaKey = "map.span.latitudeDelta"
+    let MapSpanLongitudeDeltaKey = "map.span.longitudeDelta"
+    
     @IBOutlet weak var mapView: MKMapView!
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.mapView.delegate = self
-        
-        // Step 2: invoke fetchedResultsController.performFetch(nil) here
         do {
-            try fetchedResultsController.performFetch()
+            try fetchedPinResultsController.performFetch()
         } catch {}
         
-        // Step 9: set the fetchedResultsController.delegate = self
-        fetchedResultsController.delegate = self
-    
-        self.mapView.addAnnotations(fetchedResultsController.fetchedObjects as! [MKAnnotation])
+        self.mapView.delegate = self
+        fetchedPinResultsController.delegate = self
         
+        // Load previous map state
+        loadPersistedMapViewRegion()
+    
+        // load persisted annotations
+        self.mapView.addAnnotations(fetchedPinResultsController.fetchedObjects as! [MKAnnotation])
+        
+        // add long press gesture to the map
         let longPress = UILongPressGestureRecognizer(target: self, action: "dropPin:")
         longPress.minimumPressDuration = 0.5
         mapView.addGestureRecognizer(longPress)
@@ -57,9 +67,8 @@ class MapViewController: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
         return CoreDataStackManager.sharedInstance().managedObjectContext
     }
     
-    // Step 1 - Add the lazy fetchedResultsController property. See the reference sheet in the lesson if you
-    // want additional help creating this property.
-    lazy var fetchedResultsController: NSFetchedResultsController = {
+    // lazy fetchedResultsController property
+    lazy var fetchedPinResultsController: NSFetchedResultsController = {
         
         let fetchRequest = NSFetchRequest(entityName: "Pin")
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "latitude", ascending: true)]
@@ -76,50 +85,54 @@ class MapViewController: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
     // MARK: - MKMapViewDelegate
     
     func mapView(mapView: MKMapView, didSelectAnnotationView view: MKAnnotationView) {
-        let controller = self.storyboard!.instantiateViewControllerWithIdentifier("AlbumViewController") as! AlbumViewController
-        self.navigationController!.pushViewController(controller, animated: true)
+        //let controller = self.storyboard!.instantiateViewControllerWithIdentifier("AlbumViewController") as! AlbumViewController
+        //self.navigationController!.pushViewController(controller, animated: true)
     }
     
-    //func mapView(mapView: MKMapView, viewForAnnotation annotation: MKAnnotation) -> MKAnnotationView? {
-    //    let reuseId = "pin"
+    func mapView(mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
+        print ("test")
+        if control == view.rightCalloutAccessoryView {
+            let controller = self.storyboard!.instantiateViewControllerWithIdentifier("AlbumViewController") as! AlbumViewController
+            self.navigationController!.pushViewController(controller, animated: true)
+            
+        }
+    }
+    
+    func mapView(mapView: MKMapView, annotationView view: MKAnnotationView,
+        didChangeDragState newState: MKAnnotationViewDragState, fromOldState oldState: MKAnnotationViewDragState) {
+            
+            if newState == MKAnnotationViewDragState.Ending {
+                CoreDataStackManager.sharedInstance().saveContext()
+            }
+    }
+    
+    func mapView(mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
+        persistMapViewRegion(mapView.region)
+    }
+    
+    func mapView(mapView: MKMapView, viewForAnnotation annotation: MKAnnotation) -> MKAnnotationView? {
+        let reuseId = "pin"
         
-    //    let pin = fetchedResultsController.objectAtIndexPath(indexPath) as! Pin
+        var pinView = mapView.dequeueReusableAnnotationViewWithIdentifier(reuseId) as? MKPinAnnotationView
         
-    //    var pinView = mapView.dequeueReusableAnnotationViewWithIdentifier(reuseId) as? MKPinAnnotationView
+        if pinView == nil {
+            pinView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: reuseId)
+            pinView!.canShowCallout = true
+            pinView!.draggable = true
+            pinView!.pinTintColor = MKPinAnnotationView.greenPinColor()
+            pinView!.rightCalloutAccessoryView = UIButton(type: .DetailDisclosure)
+        }
+        else {
+            pinView!.annotation = annotation
+        }
         
-    //    if pinView == nil {
-    //        pinView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: reuseId)
-    //        pinView!.canShowCallout = true
-    //        pinView!.pinTintColor = MKPinAnnotationView.greenPinColor()
-    //        pinView!.rightCalloutAccessoryView = UIButton(type: .DetailDisclosure)
-    //    }
-    //    else {
-    //        pinView!.annotation = annotation
-    //    }
-        
-    //    return pinView
-    //}
+        return pinView
+    }
     
     // MARK: - NSFetchedResultsControllerDelegate methods
     
     func controllerWillChangeContent(controller: NSFetchedResultsController) {
         print("controllerWillChangeContent")
-    }
-    func controller(controller: NSFetchedResultsController,
-        didChangeSection sectionInfo: NSFetchedResultsSectionInfo,
-        atIndex sectionIndex: Int,
-        forChangeType type: NSFetchedResultsChangeType) {
-            
-            switch type {
-            case .Insert:
-                print("insert")
-                
-            case .Delete:
-                print("delete")
-                
-            default:
-                return
-            }
     }
     
     func controller(controller: NSFetchedResultsController,
@@ -148,6 +161,38 @@ class MapViewController: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
     
     func controllerDidChangeContent(controller: NSFetchedResultsController) {
         print("controllerDidChangeContent")
+    }
+    
+    // MARK: NSUserDefaults
+    
+    // Saves a region to NSUserDefaults
+    func persistMapViewRegion(region: MKCoordinateRegion) {
+        let userDetaults = NSUserDefaults.standardUserDefaults()
+        
+        userDetaults.setDouble(region.center.latitude, forKey: MapCenterLatitudeKey)
+        userDetaults.setDouble(region.center.longitude, forKey: MapCenterLongitudeKey)
+        userDetaults.setDouble(region.span.latitudeDelta, forKey: MapSpanLatitudeDeltaKey)
+        userDetaults.setDouble(region.span.longitudeDelta, forKey: MapSpanLongitudeDeltaKey)
+        userDetaults.setBool(true, forKey: MapSavedRegionExists)
+    }
+    
+    
+    // Load the saved region if exists in NSUserData
+    func loadPersistedMapViewRegion() {
+        let userDetaults = NSUserDefaults.standardUserDefaults()
+        
+        let savedRegionExists = userDetaults.boolForKey(MapSavedRegionExists)
+        
+        if (savedRegionExists) {
+            let latitude = userDetaults.doubleForKey(MapCenterLatitudeKey)
+            let longitude = userDetaults.doubleForKey(MapCenterLongitudeKey)
+            let latitudeDelta = userDetaults.doubleForKey(MapSpanLatitudeDeltaKey)
+            let longitudeDelta = userDetaults.doubleForKey(MapSpanLongitudeDeltaKey)
+            
+            mapView.region.center = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+            mapView.region.span = MKCoordinateSpan(latitudeDelta: latitudeDelta, longitudeDelta: longitudeDelta)
+        }
+        
     }
 }
 

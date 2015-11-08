@@ -19,6 +19,7 @@
 		F349C2621BEE9B22007350CB /* AlbumViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F349C2611BEE9B22007350CB /* AlbumViewController.swift */; };
 		F349C2671BEEAA28007350CB /* CoreDataStackManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F349C2661BEEAA28007350CB /* CoreDataStackManager.swift */; };
 		F349C2691BEEAAB9007350CB /* Pin.swift in Sources */ = {isa = PBXBuildFile; fileRef = F349C2681BEEAAB9007350CB /* Pin.swift */; };
+		F349C26B1BEF608D007350CB /* Map.swift in Sources */ = {isa = PBXBuildFile; fileRef = F349C26A1BEF608D007350CB /* Map.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -57,6 +58,7 @@
 		F349C2611BEE9B22007350CB /* AlbumViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlbumViewController.swift; sourceTree = "<group>"; };
 		F349C2661BEEAA28007350CB /* CoreDataStackManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreDataStackManager.swift; sourceTree = "<group>"; };
 		F349C2681BEEAAB9007350CB /* Pin.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Pin.swift; sourceTree = "<group>"; };
+		F349C26A1BEF608D007350CB /* Map.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Map.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -164,6 +166,7 @@
 			isa = PBXGroup;
 			children = (
 				F349C2681BEEAAB9007350CB /* Pin.swift */,
+				F349C26A1BEF608D007350CB /* Map.swift */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -302,6 +305,7 @@
 				F349C2621BEE9B22007350CB /* AlbumViewController.swift in Sources */,
 				F349C2311BEE6AB2007350CB /* MapViewController.swift in Sources */,
 				F349C2371BEE6AB2007350CB /* Virtual_Tourist.xcdatamodeld in Sources */,
+				F349C26B1BEF608D007350CB /* Map.swift in Sources */,
 				F349C2691BEEAAB9007350CB /* Pin.swift in Sources */,
 				F349C2671BEEAA28007350CB /* CoreDataStackManager.swift in Sources */,
 				F349C22F1BEE6AB2007350CB /* AppDelegate.swift in Sources */,
