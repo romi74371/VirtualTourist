@@ -21,6 +21,7 @@ class Pin : NSManagedObject, MKAnnotation {
     
     @NSManaged var latitude: Double
     @NSManaged var longitude: Double
+    @NSManaged var photos: [Photo]
     
     var title: String? = "View album"
     

@@ -67,12 +67,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
                 return
             
         }
-        
-        
         // save the pin location
-        
-        
-        
     }
     
     // MARK: - Core Data Convenience. This will be useful for fetching. And for adding and saving objects as well.
@@ -101,6 +96,8 @@ class MapViewController: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
     func mapView(mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
         if control == view.rightCalloutAccessoryView {
             let controller = self.storyboard!.instantiateViewControllerWithIdentifier("AlbumViewController") as! AlbumViewController
+            let annotation = view.annotation as! Pin
+            controller.pin = annotation
             self.navigationController!.pushViewController(controller, animated: true)
             
         }
