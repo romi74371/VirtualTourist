@@ -31,17 +31,17 @@ class AlbumViewController: UIViewController, UICollectionViewDataSource, UIColle
         
         self.mapView.addAnnotation(pin!)
         
+        fetchedResultsController.delegate = self
+        
         do {
             try fetchedResultsController.performFetch()
         } catch {}
-        
-        fetchedResultsController.delegate = self
     }
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         
-        if pin.photos.isEmpty {
+        if pin.photos!.isEmpty {
             loadData()
         }
     }

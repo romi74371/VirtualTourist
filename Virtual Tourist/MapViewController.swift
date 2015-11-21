@@ -146,6 +146,8 @@ class MapViewController: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
         forChangeType type: NSFetchedResultsChangeType,
         newIndexPath: NSIndexPath?) {
             
+            pinInFocus = anObject as! Pin
+            
             switch type {
             case .Insert:
                 print("insert2")
@@ -158,7 +160,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
                 
             case .Move:
                 print("move2")
-                
+                pinInFocus?.deletePinPhotosAndSave()
             default:
                 return
             }

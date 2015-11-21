@@ -21,7 +21,7 @@ class Pin : NSManagedObject, MKAnnotation {
     
     @NSManaged var latitude: Double
     @NSManaged var longitude: Double
-    @NSManaged var photos: [Photo]
+    @NSManaged var photos: [Photo]?
     
     var title: String? = "View album"
     
@@ -49,5 +49,26 @@ class Pin : NSManagedObject, MKAnnotation {
         self.latitude = newCoordinate.latitude
         self.longitude = newCoordinate.longitude
         didChangeValueForKey("coordinate")
+    }
+    
+    lazy var sharedContext: NSManagedObjectContext! = {
+        return CoreDataStackManager.sharedInstance().managedObjectContext
+    }()
+    
+    // Delete all pin's photos and then save
+    func deletePinPhotosAndSave() {
+        if let photos = self.photos {
+            for photo in photos {
+                deletePhoto(photo)
+            }
+        }
+        
+        CoreDataStackManager.sharedInstance().saveContext()
+    }
+    
+    // Only delete the photo
+    func deletePhoto(photo: Photo) {
+        photo.pin = nil
+        sharedContext.deleteObject(photo)
     }
 }
