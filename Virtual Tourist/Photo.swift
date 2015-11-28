@@ -17,7 +17,7 @@ class Photo : NSManagedObject {
         static let Id = "id"
         static let Title = "title"
         static let ImageURL = "url_m"
-        static let ImagePath = "imagePath"
+        //static let ImagePath = "imagePath"
     }
     
     @NSManaged var title: String?
@@ -42,12 +42,11 @@ class Photo : NSManagedObject {
     var albumImage: UIImage? {
         
         get {
-            //return TheMovieDB.Caches.imageCache.imageWithIdentifier(posterPath)
-            return nil
+            return FlickrClient.Caches.imageCache.imageWithIdentifier(imageURL)
         }
         
         set {
-            //TheMovieDB.Caches.imageCache.storeImage(newValue, withIdentifier: posterPath!)
+            FlickrClient.Caches.imageCache.storeImage(newValue, withIdentifier: imageURL!)
         }
     }
     

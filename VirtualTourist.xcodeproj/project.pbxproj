@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F30EBBC41C0A46D90016A9A2 /* ImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = F30EBBC31C0A46D90016A9A2 /* ImageCache.swift */; };
 		F349C22F1BEE6AB2007350CB /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F349C22E1BEE6AB2007350CB /* AppDelegate.swift */; };
 		F349C2311BEE6AB2007350CB /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F349C2301BEE6AB2007350CB /* MapViewController.swift */; };
 		F349C2341BEE6AB2007350CB /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F349C2321BEE6AB2007350CB /* Main.storyboard */; };
@@ -45,6 +46,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		F30EBBC31C0A46D90016A9A2 /* ImageCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageCache.swift; sourceTree = "<group>"; };
 		F349C22B1BEE6AB2007350CB /* VirtualTourist.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VirtualTourist.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F349C22E1BEE6AB2007350CB /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		F349C2301BEE6AB2007350CB /* MapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
@@ -180,6 +182,7 @@
 				F349C26C1BF355CC007350CB /* Client */,
 				F349C2681BEEAAB9007350CB /* Pin.swift */,
 				F349C2741BF3626E007350CB /* Photo.swift */,
+				F30EBBC31C0A46D90016A9A2 /* ImageCache.swift */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -334,6 +337,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F349C2621BEE9B22007350CB /* AlbumViewController.swift in Sources */,
+				F30EBBC41C0A46D90016A9A2 /* ImageCache.swift in Sources */,
 				F349C2771BF3E043007350CB /* TaskCancelingCollectionViewCell.swift in Sources */,
 				F349C2711BF35665007350CB /* FlickrConstants.swift in Sources */,
 				F349C2311BEE6AB2007350CB /* MapViewController.swift in Sources */,

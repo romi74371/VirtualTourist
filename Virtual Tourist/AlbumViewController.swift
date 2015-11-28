@@ -194,6 +194,7 @@ class AlbumViewController: UIViewController, UICollectionViewDataSource, UIColle
         FlickrClient.sharedInstance().getPhotos(pin.latitude, longitude: pin.longitude) { (success, result, totalPhotos, totalPages, errorString) in
             if (success == true) {
                 print("Photos have been found!")
+                //print(result)
                 
                 // Parse the array of photo dictionaries
                 let _ = result!.map() { (dictionary: [String : AnyObject]) -> Photo in
@@ -227,14 +228,17 @@ class AlbumViewController: UIViewController, UICollectionViewDataSource, UIColle
         // Set the Movie Poster Image
         if photo.imageURL == nil || photo.imageURL == "" {
             cellImage = UIImage(named: "noImage")
-        //} else if photo.imageFilename != nil {
-        //    cellImage = photo.albumImage
+        } else if photo.albumImage != nil {
+            cellImage = photo.albumImage
         } else { // This is the interesting case. The pin has an image name, but it is not downloaded yet.
             cell.activityIndicator.hidden = false
             cell.activityIndicator.startAnimating()
             
             FlickrClient.sharedInstance().getPhoto(NSURL(string: photo.imageURL!)!) { (success, result, errorString) in
                 if (success == true) {
+                    // update the model, so that the infrmation gets cashed
+                    photo.albumImage = result
+                    
                     dispatch_async(dispatch_get_main_queue(), {
                         cell.imageView!.image = result
                         
@@ -249,6 +253,6 @@ class AlbumViewController: UIViewController, UICollectionViewDataSource, UIColle
             //cell.taskToCancelifCellIsReused = task
         }
         
-        //cell.imageView!.image = cellImage
+        cell.imageView!.image = cellImage
     }
 }
