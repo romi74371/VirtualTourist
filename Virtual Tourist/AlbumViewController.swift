@@ -201,6 +201,8 @@ class AlbumViewController: UIViewController, UICollectionViewDataSource, UIColle
                     let photo = Photo(dictionary: dictionary, context: self.sharedContext)
                     photo.pin = self.pin
                     
+                    //CoreDataStackManager.sharedInstance().saveContext()
+                    
                     return photo
                 }
                 
@@ -239,6 +241,8 @@ class AlbumViewController: UIViewController, UICollectionViewDataSource, UIColle
                     // update the model, so that the infrmation gets cashed
                     photo.albumImage = result
                     
+                    CoreDataStackManager.sharedInstance().saveContext()
+                    
                     dispatch_async(dispatch_get_main_queue(), {
                         cell.imageView!.image = result
                         
@@ -249,6 +253,7 @@ class AlbumViewController: UIViewController, UICollectionViewDataSource, UIColle
                     print(errorString)
                 }
             }
+            CoreDataStackManager.sharedInstance().saveContext()
             // This is the custom property on this cell. See TaskCancelingTableViewCell.swift for details.
             //cell.taskToCancelifCellIsReused = task
         }

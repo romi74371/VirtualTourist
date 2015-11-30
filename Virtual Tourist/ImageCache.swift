@@ -58,7 +58,19 @@ class ImageCache {
         // And in documents directory
         let data = UIImagePNGRepresentation(image!)!
         data.writeToFile(path, atomically: true)
+        print(path)
     }
+    
+    func removeImage(identifier: String) {
+        let path = pathForIdentifier(identifier)
+        
+        do {
+            try NSFileManager.defaultManager().removeItemAtPath(path)
+        } catch _ {}
+        
+        return
+    }
+    
     
     // MARK: - Helper
     

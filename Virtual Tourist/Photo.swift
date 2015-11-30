@@ -17,13 +17,22 @@ class Photo : NSManagedObject {
         static let Id = "id"
         static let Title = "title"
         static let ImageURL = "url_m"
-        //static let ImagePath = "imagePath"
     }
     
     @NSManaged var title: String?
     @NSManaged var imageURL: String?
-    @NSManaged var imagePath: String?
+    //@NSManaged var imagePath: String?
     @NSManaged var pin: Pin?
+    
+    var albumImage: UIImage? {
+        get {
+            return FlickrClient.Caches.imageCache.imageWithIdentifier(getFilename(NSURL(string: imageURL!)!))
+        }
+        
+        set {
+            FlickrClient.Caches.imageCache.storeImage(newValue, withIdentifier: getFilename(NSURL(string: imageURL!)!))
+        }
+    }
     
     override init(entity: NSEntityDescription, insertIntoManagedObjectContext context: NSManagedObjectContext?) {
         super.init(entity: entity, insertIntoManagedObjectContext: context)
@@ -39,15 +48,17 @@ class Photo : NSManagedObject {
         //imagePath = dictionary[Keys.ImagePath] as? String
     }
     
-    var albumImage: UIImage? {
-        
-        get {
-            return FlickrClient.Caches.imageCache.imageWithIdentifier(imageURL)
+    // before delete this entity delete the image in the FS
+    override func prepareForDeletion() {
+        // Delete file if possible
+        if let imageURL = self.imageURL {
+            FlickrClient.Caches.imageCache.removeImage(getFilename(NSURL(string: imageURL)!))
         }
-        
-        set {
-            FlickrClient.Caches.imageCache.storeImage(newValue, withIdentifier: imageURL!)
-        }
+    }
+    
+    func getFilename(photoURL: NSURL) -> String {
+        let components = photoURL.pathComponents
+        return components!.last!
     }
     
 }
