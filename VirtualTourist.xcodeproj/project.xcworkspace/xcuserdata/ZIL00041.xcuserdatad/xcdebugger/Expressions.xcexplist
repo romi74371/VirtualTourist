@@ -13,5 +13,19 @@
             </PersistentString>
          </PersistentStrings>
       </ContextState>
+      <ContextState
+         contextName = "AlbumViewController.(loadData(AlbumViewController) -&gt; () -&gt; ()).(closure #1).(closure #1):AlbumViewController.swift">
+      </ContextState>
+      <ContextState
+         contextName = "AlbumViewController.configureCell(PhotoCollectionViewCell, photo : Photo) -&gt; ():AlbumViewController.swift">
+      </ContextState>
+      <ContextState
+         contextName = "AlbumViewController.viewWillAppear(Bool) -&gt; ():AlbumViewController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "pin.pendingDownloads">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
    </ContextStates>
 </VariablesViewState>

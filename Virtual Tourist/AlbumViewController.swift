@@ -23,8 +23,8 @@ class AlbumViewController: UIViewController, UICollectionViewDataSource, UIColle
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        //self.mapView.delegate = self
         self.collectionView.dataSource = self
+        self.collectionView.delegate = self
         
         self.mapView.region.center = pin!.coordinate
         self.mapView.region.span = MKCoordinateSpan(latitudeDelta: self.latitudeDelta, longitudeDelta: self.longitudeDelta)
@@ -41,8 +41,16 @@ class AlbumViewController: UIViewController, UICollectionViewDataSource, UIColle
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         
-        if pin.photos!.isEmpty {
-            loadData()
+        if (pin.photos!.isEmpty) {
+            if (pin.pendingDownloads > 0) {
+              loadData()
+            } else {
+                let alertController = UIAlertController(title: "Alert", message:
+                    "There are no photos in current album!", preferredStyle: UIAlertControllerStyle.Alert)
+                alertController.addAction(UIAlertAction(title: "Dismiss", style: UIAlertActionStyle.Default,handler: nil))
+                
+                self.presentViewController(alertController, animated: true, completion: nil)
+            }
         }
     }
     
@@ -117,17 +125,10 @@ class AlbumViewController: UIViewController, UICollectionViewDataSource, UIColle
     
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
         
-        //let cell = collectionView.cellForItemAtIndexPath(indexPath) as! UICollectionViewCell
-        
         // Delete image
-        //let photo = self.fetchedResultsController.objectAtIndexPath(indexPath) as! Photo
-        // Only remove ready or failed images
-        //if photo.imageState != Photo.State.New {
-        //    photoService.deletePhotoAndSave(photo)
-        //} else {
-        //    showMessageWithTitle("Operation not allowed", message: "You can't delete a photo while it is downloading")
-        //}
-        
+        let photo = self.fetchedResultsController.objectAtIndexPath(indexPath) as! Photo
+        self.pin.deletePhoto(photo)
+        CoreDataStackManager.sharedInstance().saveContext()
     }
     
     // MARK: - Fetched Results Controller Delegate
@@ -137,27 +138,6 @@ class AlbumViewController: UIViewController, UICollectionViewDataSource, UIColle
         //self.collectionView.beginUpdates()
     }
     
-    func controller(controller: NSFetchedResultsController,
-        didChangeSection sectionInfo: NSFetchedResultsSectionInfo,
-        atIndex sectionIndex: Int,
-        forChangeType type: NSFetchedResultsChangeType) {
-            
-            switch type {
-            case .Insert:
-                //self.tableView.insertSections(NSIndexSet(index: sectionIndex), withRowAnimation: .Fade)
-                print("insert")
-            case .Delete:
-                //self.tableView.deleteSections(NSIndexSet(index: sectionIndex), withRowAnimation: .Fade)
-                print("delete")
-            default:
-                return
-            }
-    }
-    
-    //
-    // This is the most interesting method. Take particular note of way the that newIndexPath
-    // parameter gets unwrapped and put into an array literal: [newIndexPath!]
-    //
     func controller(controller: NSFetchedResultsController,
         didChangeObject anObject: AnyObject,
         atIndexPath indexPath: NSIndexPath?,
@@ -171,6 +151,7 @@ class AlbumViewController: UIViewController, UICollectionViewDataSource, UIColle
                 
             case .Delete:
                 //tableView.deleteRowsAtIndexPaths([indexPath!], withRowAnimation: .Fade)
+                self.collectionView.deleteItemsAtIndexPaths([indexPath!])
                 print("delete2")
                 
             case .Update:
@@ -219,7 +200,7 @@ class AlbumViewController: UIViewController, UICollectionViewDataSource, UIColle
     // MARK: - Configure Cell
     
     func configureCell(cell: PhotoCollectionViewCell, photo: Photo) {
-        var cellImage = UIImage(named: "posterPlaceHoldr")
+        var cellImage = UIImage(named: "posterPlaceHolder")
         
         //cell.textLabel!.text = photo.title
         cell.imageView!.image = nil
@@ -240,6 +221,16 @@ class AlbumViewController: UIViewController, UICollectionViewDataSource, UIColle
                 if (success == true) {
                     // update the model, so that the infrmation gets cashed
                     photo.albumImage = result
+                    self.pin.pendingDownloads--
+                    if (self.pin.pendingDownloads == 0) {
+                        dispatch_async(dispatch_get_main_queue(), {
+                            let alertController = UIAlertController(title: "Alert", message:
+                                "All photos have been downloaded", preferredStyle: UIAlertControllerStyle.Alert)
+                            alertController.addAction(UIAlertAction(title: "Dismiss", style: UIAlertActionStyle.Default,handler: nil))
+                            
+                            self.presentViewController(alertController, animated: true, completion: nil)
+                        })
+                    }
                     
                     CoreDataStackManager.sharedInstance().saveContext()
                     

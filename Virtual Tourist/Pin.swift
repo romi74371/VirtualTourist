@@ -17,11 +17,17 @@ class Pin : NSManagedObject, MKAnnotation {
     struct Keys {
         static let Latitude = "latitude"
         static let Longitude = "longitude"
+        static let CurrentPage = "currentPage"
+        static let TotalPages = "totalPages"
     }
     
     @NSManaged var latitude: Double
     @NSManaged var longitude: Double
     @NSManaged var photos: [Photo]?
+    
+    @NSManaged var currentPage: Int16
+    @NSManaged var totalPages: Int16
+    @NSManaged var pendingDownloads: Int16
     
     var title: String? = "View album"
     
@@ -36,6 +42,9 @@ class Pin : NSManagedObject, MKAnnotation {
         
         latitude = dictionary[Keys.Latitude] as! Double
         longitude = dictionary[Keys.Longitude] as! Double
+        
+        currentPage = 1
+        pendingDownloads = Int16(FlickrClient.Constants.PER_PAGE)!
     }
     
     // MARK - MKAnnotation
@@ -55,18 +64,17 @@ class Pin : NSManagedObject, MKAnnotation {
         return CoreDataStackManager.sharedInstance().managedObjectContext
     }()
     
-    // Delete all pin's photos and then save
-    func deletePinPhotosAndSave() {
+    // Delete all pin's photos
+    func deletePhotos() {
         if let photos = self.photos {
             for photo in photos {
                 deletePhoto(photo)
             }
         }
-        
-        CoreDataStackManager.sharedInstance().saveContext()
+        pendingDownloads = Int16(FlickrClient.Constants.PER_PAGE)!
     }
     
-    // Only delete the photo
+    // Delete one pin photo
     func deletePhoto(photo: Photo) {
         photo.pin = nil
         sharedContext.deleteObject(photo)

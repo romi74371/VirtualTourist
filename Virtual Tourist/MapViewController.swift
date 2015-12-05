@@ -160,7 +160,8 @@ class MapViewController: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
                 
             case .Move:
                 print("move2")
-                pinInFocus?.deletePinPhotosAndSave()
+                pinInFocus?.deletePhotos()
+                CoreDataStackManager.sharedInstance().saveContext()
             default:
                 return
             }
