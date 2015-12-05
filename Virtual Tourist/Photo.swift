@@ -17,11 +17,12 @@ class Photo : NSManagedObject {
         static let Id = "id"
         static let Title = "title"
         static let ImageURL = "url_m"
+        static let ImagePath = "imageFilePath"
     }
     
     @NSManaged var title: String?
     @NSManaged var imageURL: String?
-    //@NSManaged var imagePath: String?
+    @NSManaged var imagePath: String?
     @NSManaged var pin: Pin?
     
     var albumImage: UIImage? {
@@ -31,6 +32,10 @@ class Photo : NSManagedObject {
         
         set {
             FlickrClient.Caches.imageCache.storeImage(newValue, withIdentifier: getFilename(NSURL(string: imageURL!)!))
+            //let dirPath = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)[0]
+            //let pathArray = [dirPath, getFilename(NSURL(string: imageURL!)!)]
+            //let fileURL = NSURL.fileURLWithPathComponents(pathArray)!
+            //self.imagePath = fileURL.path
         }
     }
     
@@ -45,7 +50,6 @@ class Photo : NSManagedObject {
         
         title = dictionary[Keys.Title] as? String
         imageURL = dictionary[Keys.ImageURL] as? String
-        //imagePath = dictionary[Keys.ImagePath] as? String
     }
     
     // before delete this entity delete the image in the FS

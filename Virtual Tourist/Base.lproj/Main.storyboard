@@ -100,12 +100,25 @@
                                     </collectionViewCell>
                                 </cells>
                             </collectionView>
+                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="I83-xZ-DBH">
+                                <rect key="frame" x="240" y="536" width="121" height="30"/>
+                                <animations/>
+                                <color key="backgroundColor" red="0.43529411759999997" green="0.4431372549" blue="0.47450980390000003" alpha="1" colorSpace="calibratedRGB"/>
+                                <state key="normal" title=" New Download ">
+                                    <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                </state>
+                                <connections>
+                                    <action selector="newDownloadTouchUpInside:" destination="AfX-Fl-Nax" eventType="touchUpInside" id="ZRu-5g-EDH"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <animations/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
+                            <constraint firstItem="I83-xZ-DBH" firstAttribute="centerX" secondItem="jaw-W2-ANe" secondAttribute="centerX" id="2uG-jp-qrt"/>
                             <constraint firstItem="7Gs-PS-9hz" firstAttribute="top" secondItem="jaw-W2-ANe" secondAttribute="bottom" id="7gs-RI-c6T"/>
                             <constraint firstAttribute="leadingMargin" secondItem="9LL-6Q-QR3" secondAttribute="leading" constant="16" id="8EM-dY-mUe"/>
+                            <constraint firstItem="7Gs-PS-9hz" firstAttribute="top" secondItem="I83-xZ-DBH" secondAttribute="bottom" constant="30" id="D9c-24-1EB"/>
                             <constraint firstItem="9LL-6Q-QR3" firstAttribute="top" secondItem="OuX-es-bEV" secondAttribute="bottom" id="GsZ-dR-vKy"/>
                             <constraint firstAttribute="trailingMargin" secondItem="jaw-W2-ANe" secondAttribute="trailing" constant="-16" id="XwT-Il-xET"/>
                             <constraint firstAttribute="trailingMargin" secondItem="9LL-6Q-QR3" secondAttribute="trailing" constant="-16" id="c3w-cl-yHf"/>
@@ -116,6 +129,7 @@
                     <connections>
                         <outlet property="collectionView" destination="jaw-W2-ANe" id="nC0-tt-gV4"/>
                         <outlet property="mapView" destination="9LL-6Q-QR3" id="Spc-HC-5QA"/>
+                        <outlet property="newDownloadButton" destination="I83-xZ-DBH" id="9wk-d5-kWb"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="0wC-7h-lFL" userLabel="First Responder" sceneMemberID="firstResponder"/>

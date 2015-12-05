@@ -19,9 +19,12 @@ class AlbumViewController: UIViewController, UICollectionViewDataSource, UIColle
     
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var collectionView: UICollectionView!
+    @IBOutlet weak var newDownloadButton: UIButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        self.newDownloadButton.hidden = false
         
         self.collectionView.dataSource = self
         self.collectionView.delegate = self
@@ -41,6 +44,10 @@ class AlbumViewController: UIViewController, UICollectionViewDataSource, UIColle
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         
+        if (pin.pendingDownloads == 0) {
+            self.newDownloadButton.hidden = false
+        }
+
         if (pin.photos!.isEmpty) {
             if (pin.pendingDownloads > 0) {
               loadData()
@@ -52,6 +59,15 @@ class AlbumViewController: UIViewController, UICollectionViewDataSource, UIColle
                 self.presentViewController(alertController, animated: true, completion: nil)
             }
         }
+    }
+    
+    @IBAction func newDownloadTouchUpInside(sender: AnyObject) {
+        for photo in fetchedResultsController.fetchedObjects as! [Photo]{
+            FlickrClient.Caches.imageCache.removeImage(NSURL(string: photo.imageURL!)!.lastPathComponent!)
+            pin.deletePhoto(photo)
+            CoreDataStackManager.sharedInstance().saveContext()
+        }
+        loadData()
     }
     
     // MARK: - MKMapViewDelegate
@@ -106,18 +122,14 @@ class AlbumViewController: UIViewController, UICollectionViewDataSource, UIColle
     
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         let sectionInfo = self.fetchedResultsController.sections![section]
-        
         return sectionInfo.numberOfObjects
     }
     
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         
-        // Here is how to replace the actors array using objectAtIndexPath
         let photo = fetchedResultsController.objectAtIndexPath(indexPath) as! Photo
-        
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier("PhotoCollectionViewCell", forIndexPath: indexPath) as! PhotoCollectionViewCell
         
-        // This is the new configureCell method
         configureCell(cell, photo: photo)
         
         return cell
@@ -134,7 +146,7 @@ class AlbumViewController: UIViewController, UICollectionViewDataSource, UIColle
     // MARK: - Fetched Results Controller Delegate
     
     func controllerWillChangeContent(controller: NSFetchedResultsController) {
-        print("controllerWillChangeContent")
+        //print("controllerWillChangeContent")
     }
     
     func controller(controller: NSFetchedResultsController, didChangeObject anObject: AnyObject, atIndexPath indexPath: NSIndexPath?,
@@ -142,24 +154,26 @@ class AlbumViewController: UIViewController, UICollectionViewDataSource, UIColle
             switch type {
                 case .Insert:
                     print("insert")
+                    self.collectionView.insertItemsAtIndexPaths([newIndexPath!])
                 case .Delete:
                     print("delete")
                     self.collectionView.deleteItemsAtIndexPaths([indexPath!])
                 case .Update:
                     print("uptade")
+                    self.collectionView.reloadItemsAtIndexPaths([indexPath!])
                 case .Move:
                     print("move")
             }
     }
     
     func controllerDidChangeContent(controller: NSFetchedResultsController) {
-        print("controllerDidChangeContent")
+        //print("controllerDidChangeContent")
     }
     
     func loadData() {
         FlickrClient.sharedInstance().getPhotos(pin.latitude, longitude: pin.longitude) { (success, result, totalPhotos, totalPages, errorString) in
             if (success == true) {
-                print("Photos have been found!")
+                print("\(totalPhotos) photos have been found!")
                 //print(result)
                 
                 // Parse the array of photo dictionaries
@@ -171,7 +185,7 @@ class AlbumViewController: UIViewController, UICollectionViewDataSource, UIColle
                     return photo
                 }
                 
-                // Update the table on the main thread
+                // Update the collection view on the main thread
                 dispatch_async(dispatch_get_main_queue()) {
                     self.collectionView.reloadData()
                 }
@@ -190,7 +204,7 @@ class AlbumViewController: UIViewController, UICollectionViewDataSource, UIColle
         cell.imageView!.image = nil
         cell.activityIndicator.hidden = true
         
-        print("configure \(photo)")
+        //print("configure \(photo)")
         
         // Set the Movie Poster Image
         if photo.imageURL == nil || photo.imageURL == "" {
@@ -205,18 +219,19 @@ class AlbumViewController: UIViewController, UICollectionViewDataSource, UIColle
                 if (success == true) {
                     // update the model, so that the infrmation gets cashed
                     photo.albumImage = result
-                    self.pin.pendingDownloads--
+                    //self.pin.pendingDownloads--
+                    CoreDataStackManager.sharedInstance().saveContext()
+                    
                     if (self.pin.pendingDownloads == 0) {
                         dispatch_async(dispatch_get_main_queue(), {
                             let alertController = UIAlertController(title: "Alert", message:
                                 "All photos have been downloaded", preferredStyle: UIAlertControllerStyle.Alert)
                             alertController.addAction(UIAlertAction(title: "Dismiss", style: UIAlertActionStyle.Default,handler: nil))
-                            
                             self.presentViewController(alertController, animated: true, completion: nil)
+                            
+                            self.newDownloadButton.hidden = false
                         })
                     }
-                    
-                    CoreDataStackManager.sharedInstance().saveContext()
                     
                     dispatch_async(dispatch_get_main_queue(), {
                         cell.imageView!.image = result
@@ -228,7 +243,7 @@ class AlbumViewController: UIViewController, UICollectionViewDataSource, UIColle
                     print(errorString)
                 }
             }
-            CoreDataStackManager.sharedInstance().saveContext()
+            //CoreDataStackManager.sharedInstance().saveContext()
             // This is the custom property on this cell. See TaskCancelingTableViewCell.swift for details.
             //cell.taskToCancelifCellIsReused = task
         }

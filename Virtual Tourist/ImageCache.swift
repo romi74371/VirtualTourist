@@ -64,6 +64,8 @@ class ImageCache {
     func removeImage(identifier: String) {
         let path = pathForIdentifier(identifier)
         
+        inMemoryCache.removeObjectForKey(path)
+        
         do {
             try NSFileManager.defaultManager().removeItemAtPath(path)
         } catch _ {}
