@@ -133,42 +133,27 @@ class AlbumViewController: UIViewController, UICollectionViewDataSource, UIColle
     
     // MARK: - Fetched Results Controller Delegate
     
-    // Step 4: This would be a great place to add the delegate methods
     func controllerWillChangeContent(controller: NSFetchedResultsController) {
-        //self.collectionView.beginUpdates()
+        print("controllerWillChangeContent")
     }
     
-    func controller(controller: NSFetchedResultsController,
-        didChangeObject anObject: AnyObject,
-        atIndexPath indexPath: NSIndexPath?,
-        forChangeType type: NSFetchedResultsChangeType,
-        newIndexPath: NSIndexPath?) {
-            
+    func controller(controller: NSFetchedResultsController, didChangeObject anObject: AnyObject, atIndexPath indexPath: NSIndexPath?,
+        forChangeType type: NSFetchedResultsChangeType, newIndexPath: NSIndexPath?) {
             switch type {
-            case .Insert:
-                //tableView.insertRowsAtIndexPaths([newIndexPath!], withRowAnimation: .Fade)
-                print("insert2")
-                
-            case .Delete:
-                //tableView.deleteRowsAtIndexPaths([indexPath!], withRowAnimation: .Fade)
-                self.collectionView.deleteItemsAtIndexPaths([indexPath!])
-                print("delete2")
-                
-            case .Update:
-                //let cell = tableView.cellForRowAtIndexPath(indexPath!) as! ActorTableViewCell
-                //let movie = controller.objectAtIndexPath(indexPath!) as! Movie
-                //self.configureCell(cell, movie: movie)
-                print("uptade2")
-                
-            case .Move:
-                //tableView.deleteRowsAtIndexPaths([indexPath!], withRowAnimation: .Fade)
-                //tableView.insertRowsAtIndexPaths([newIndexPath!], withRowAnimation: .Fade)
-                print("move2")
+                case .Insert:
+                    print("insert")
+                case .Delete:
+                    print("delete")
+                    self.collectionView.deleteItemsAtIndexPaths([indexPath!])
+                case .Update:
+                    print("uptade")
+                case .Move:
+                    print("move")
             }
     }
     
     func controllerDidChangeContent(controller: NSFetchedResultsController) {
-        //self.collectionView.endUpdates()
+        print("controllerDidChangeContent")
     }
     
     func loadData() {
@@ -181,8 +166,7 @@ class AlbumViewController: UIViewController, UICollectionViewDataSource, UIColle
                 let _ = result!.map() { (dictionary: [String : AnyObject]) -> Photo in
                     let photo = Photo(dictionary: dictionary, context: self.sharedContext)
                     photo.pin = self.pin
-                    
-                    //CoreDataStackManager.sharedInstance().saveContext()
+                    CoreDataStackManager.sharedInstance().saveContext()
                     
                     return photo
                 }

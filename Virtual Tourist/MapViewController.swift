@@ -140,30 +140,20 @@ class MapViewController: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
         print("controllerWillChangeContent")
     }
     
-    func controller(controller: NSFetchedResultsController,
-        didChangeObject anObject: AnyObject,
-        atIndexPath indexPath: NSIndexPath?,
-        forChangeType type: NSFetchedResultsChangeType,
-        newIndexPath: NSIndexPath?) {
-            
-            pinInFocus = anObject as! Pin
-            
+    func controller(controller: NSFetchedResultsController, didChangeObject anObject: AnyObject, atIndexPath indexPath: NSIndexPath?,
+        forChangeType type: NSFetchedResultsChangeType, newIndexPath: NSIndexPath?) {
+            pinInFocus = anObject as? Pin
             switch type {
-            case .Insert:
-                print("insert2")
-                
-            case .Delete:
-                print("delete2")
-                
-            case .Update:
-                print("update2")
-                
-            case .Move:
-                print("move2")
-                pinInFocus?.deletePhotos()
-                CoreDataStackManager.sharedInstance().saveContext()
-            default:
-                return
+                case .Insert:
+                    print("insert2")
+                case .Delete:
+                    print("delete2")
+                case .Update:
+                    print("update2")
+                case .Move:
+                    print("move2")
+                    pinInFocus?.deletePhotos()
+                    CoreDataStackManager.sharedInstance().saveContext()
             }
     }
     
