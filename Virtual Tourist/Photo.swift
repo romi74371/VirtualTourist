@@ -31,11 +31,14 @@ class Photo : NSManagedObject {
         }
         
         set {
-            FlickrClient.Caches.imageCache.storeImage(newValue, withIdentifier: getFilename(NSURL(string: imageURL!)!))
-            //let dirPath = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)[0]
-            //let pathArray = [dirPath, getFilename(NSURL(string: imageURL!)!)]
-            //let fileURL = NSURL.fileURLWithPathComponents(pathArray)!
-            //self.imagePath = fileURL.path
+            print("DEBUG: \(newValue) \(imageURL)")
+            if let imageURL = self.imageURL {
+                FlickrClient.Caches.imageCache.storeImage(newValue, withIdentifier: getFilename(NSURL(string: imageURL)!))
+                //let dirPath = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)[0]
+                //let pathArray = [dirPath, getFilename(NSURL(string: imageURL!)!)]
+                //let fileURL = NSURL.fileURLWithPathComponents(pathArray)!
+                //self.imagePath = fileURL.path
+            }
         }
     }
     

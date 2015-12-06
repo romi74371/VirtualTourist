@@ -9,26 +9,42 @@
 import UIKit
 import Foundation
 import MapKit
+import CoreData
 
 // MARK: - Convenient Resource Methods
 
 extension FlickrClient {
     
+    // Mark: - Core Data Context
+    
+    var sharedContext: NSManagedObjectContext{
+        return CoreDataStackManager.sharedInstance().managedObjectContext
+    }
+    
     // MARK: - GET Convenience Methods
     
-    func getPhotos(latitude: Double, longitude: Double, completionHandler: (success: Bool, photos: [[String: AnyObject]]?, totalPhotos: Int, totalPages: Int, errorString: String?) -> Void) {
+    func getPhotos(pin: Pin, completionHandler: (success: Bool, photos: [[String: AnyObject]]?, totalPhotos: Int, totalPages: Int, errorString: String?) -> Void) {
     
+        // Compute random page for query
+        var randomPage = 1
+        if let numberOfPages = pin.totalPages {
+            randomPage = Int((arc4random_uniform(UInt32(numberOfPages as Int)))) + 1
+        }
+        
+        print("PAGE: \(randomPage)")
+        
         let methodArguments = [
-            "method": Methods.search,
-            "bbox": createBoundingBoxString(latitude, longitude: longitude),
+            FlickrClient.ParameterKeys.Method: Methods.search,
+            "bbox": createBoundingBoxString(pin.latitude, longitude: pin.longitude),
             "safe_search": Constants.SAFE_SEARCH,
             "extras": Constants.EXTRAS,
             "format": Constants.DATA_FORMAT,
-            "nojsoncallback": Constants.NO_JSON_CALLBACK,
-            "per_page": Constants.PER_PAGE
+            FlickrClient.ParameterKeys.NoJSONCallback: Constants.NO_JSON_CALLBACK,
+            FlickrClient.ParameterKeys.Page: randomPage,
+            FlickrClient.ParameterKeys.PerPage: Constants.PER_PAGE
         ]
         
-        taskForGETMethod("", parameters: methodArguments) { data, error in
+        taskForGETMethod("", parameters: methodArguments as! [String : AnyObject]) { data, error in
             if let _ = error {
                 completionHandler(success: false, photos: nil, totalPhotos: 0, totalPages: 0, errorString: "Get Photo Failed.")
             } else {
@@ -43,6 +59,11 @@ extension FlickrClient {
                     if let totalPages = photosDictionary["pages"] as? String {
                         totalPagesVal = (totalPages as NSString).integerValue
                     }
+                    // Save and store the number of pages returned for the pin
+                    pin.totalPages = totalPagesVal
+                    //dispatch_async(dispatch_get_main_queue()){
+                    //    CoreDataStackManager.sharedInstance().saveContext()
+                    //}
                     
                     if totalPhotosVal > 0 {
                         if let photosArray = photosDictionary["photo"] as? [[String: AnyObject]] {

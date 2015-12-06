@@ -46,11 +46,15 @@ extension FlickrClient {
     
     // MARK: - Parameter Keys
     struct ParameterKeys {
-        
         static let ApiKey = "api_key"
-        static let SessionID = "session_id"
-        static let RequestToken = "request_token"
-        static let Query = "query"
+        static let Format = "format"
+        static let Extras = "extras"
+        static let Latitude = "lat"
+        static let Longitude = "lon"
+        static let Method = "method"
+        static let NoJSONCallback = "nojsoncallback"
+        static let Page = "page"
+        static let PerPage = "per_page"
     }
     
     // MARK: - JSON Body Keys
