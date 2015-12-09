@@ -31,9 +31,10 @@ class AlbumViewController: UIViewController, UICollectionViewDataSource, UIColle
         self.collectionView.dataSource = self
         self.collectionView.delegate = self
         
+        self.mapView.delegate = self
+        self.mapView.userInteractionEnabled = false
         self.mapView.region.center = pin!.coordinate
         self.mapView.region.span = MKCoordinateSpan(latitudeDelta: self.latitudeDelta, longitudeDelta: self.longitudeDelta)
-        
         self.mapView.addAnnotation(pin!)
         
         fetchedResultsController.delegate = self
@@ -70,35 +71,6 @@ class AlbumViewController: UIViewController, UICollectionViewDataSource, UIColle
             CoreDataStackManager.sharedInstance().saveContext()
         }
         loadData()
-    }
-    
-    // MARK: - MKMapViewDelegate
-    
-    func mapView(mapView: MKMapView, viewForAnnotation annotation: MKAnnotation) -> MKAnnotationView? {
-        
-        let reuseId = "pin"
-        
-        var pinView = mapView.dequeueReusableAnnotationViewWithIdentifier(reuseId) as? MKPinAnnotationView
-        
-        if pinView == nil {
-            pinView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: reuseId)
-            pinView!.canShowCallout = true
-            pinView!.pinTintColor = MKPinAnnotationView.greenPinColor()
-            pinView!.rightCalloutAccessoryView = UIButton(type: .DetailDisclosure)
-        }
-        else {
-            pinView!.annotation = annotation
-        }
-        
-        return pinView
-    }
-    
-    func mapView(mapView: MKMapView, annotationView: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
-        
-        if control == annotationView.rightCalloutAccessoryView {
-            let app = UIApplication.sharedApplication()
-            app.openURL(NSURL(string: annotationView.annotation!.subtitle!!)!)
-        }
     }
     
     // MARK: = load data
@@ -219,6 +191,8 @@ class AlbumViewController: UIViewController, UICollectionViewDataSource, UIColle
         
         return cell
     }
+    
+    // MARK: - UICollectionViewDelegate
     
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
         

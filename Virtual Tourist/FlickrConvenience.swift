@@ -56,9 +56,10 @@ extension FlickrClient {
                     }
                     
                     var totalPagesVal = 0
-                    if let totalPages = photosDictionary["pages"] as? String {
-                        totalPagesVal = (totalPages as NSString).integerValue
+                    if let totalPages = photosDictionary["pages"] as? NSNumber {
+                        totalPagesVal = Int(totalPages)
                     }
+                    
                     // Save and store the number of pages returned for the pin
                     pin.totalPages = totalPagesVal
                     //dispatch_async(dispatch_get_main_queue()){

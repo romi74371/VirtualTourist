@@ -145,13 +145,13 @@ class MapViewController: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
             pinInFocus = anObject as? Pin
             switch type {
                 case .Insert:
-                    print("insert2")
+                    print("insert22")
                 case .Delete:
-                    print("delete2")
+                    print("delete22")
                 case .Update:
-                    print("update2")
+                    print("update22")
                 case .Move:
-                    print("move2")
+                    print("move22")
                     pinInFocus?.deletePhotos()
                     CoreDataStackManager.sharedInstance().saveContext()
             }
