@@ -137,7 +137,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
     // MARK: - NSFetchedResultsControllerDelegate methods
     
     func controllerWillChangeContent(controller: NSFetchedResultsController) {
-        print("controllerWillChangeContent")
+        //print("controllerWillChangeContent")
     }
     
     func controller(controller: NSFetchedResultsController, didChangeObject anObject: AnyObject, atIndexPath indexPath: NSIndexPath?,
@@ -145,20 +145,23 @@ class MapViewController: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
             pinInFocus = anObject as? Pin
             switch type {
                 case .Insert:
-                    print("insert22")
+                    //print("insert22")
+                    break
                 case .Delete:
-                    print("delete22")
+                    //print("delete22")
+                    break
                 case .Update:
-                    print("update22")
+                    //print("update22")
+                    break
                 case .Move:
-                    print("move22")
+                    //print("move22")
                     pinInFocus?.deletePhotos()
                     CoreDataStackManager.sharedInstance().saveContext()
             }
     }
     
     func controllerDidChangeContent(controller: NSFetchedResultsController) {
-        print("controllerDidChangeContent")
+        //print("controllerDidChangeContent")
     }
     
     // MARK: NSUserDefaults

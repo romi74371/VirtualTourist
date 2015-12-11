@@ -14,6 +14,8 @@ class AlbumViewController: UIViewController, UICollectionViewDataSource, UIColle
     var pin: Pin!
     var latitudeDelta: Double = 0.1
     var longitudeDelta: Double = 0.1
+    var downloadingCount: Int = 0
+    var enableUserInteraction = false
     
     var insertedIndexPaths: [NSIndexPath]!
     var deletedIndexPaths : [NSIndexPath]!
@@ -26,7 +28,8 @@ class AlbumViewController: UIViewController, UICollectionViewDataSource, UIColle
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.newDownloadButton.hidden = false
+        self.newDownloadButton.hidden = true
+        self.enableUserInteraction = false
         
         self.collectionView.dataSource = self
         self.collectionView.delegate = self
@@ -46,22 +49,25 @@ class AlbumViewController: UIViewController, UICollectionViewDataSource, UIColle
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
-        
-        //if (pin.pendingDownloads == 0) {
-        //    self.newDownloadButton.hidden = false
-        //}
 
-        if (pin.photos!.isEmpty) {
-            //if (Int(pin.pendingDownloads!) > 0) {
-              loadData()
-            //} else {
-            //    let alertController = UIAlertController(title: "Alert", message:
-            //        "There are no photos in current album!", preferredStyle: UIAlertControllerStyle.Alert)
-            //    alertController.addAction(UIAlertAction(title: "Dismiss", style: UIAlertActionStyle.Default,handler: nil))
-                
-            //    self.presentViewController(alertController, animated: true, completion: nil)
-            //}
+        for photo in fetchedResultsController.fetchedObjects as! [Photo]{
+            if (photo.albumImage == nil) {
+                self.downloadingCount++
+            }
+            
         }
+        if self.downloadingCount == 0 {
+            self.newDownloadButton.hidden = false
+            self.enableUserInteraction = true
+        }
+        
+        if (pin.photos!.isEmpty) {
+              loadData()
+        }
+    }
+    
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
     }
     
     @IBAction func newDownloadTouchUpInside(sender: AnyObject) {
@@ -76,6 +82,10 @@ class AlbumViewController: UIViewController, UICollectionViewDataSource, UIColle
     // MARK: = load data
     
     func loadData() {
+        self.newDownloadButton.hidden = true
+        self.enableUserInteraction = false
+        self.downloadingCount = Int(FlickrClient.Constants.PER_PAGE)!
+        
         FlickrClient.sharedInstance().getPhotos(pin) { (success, result, totalPhotos, totalPages, errorString) in
             if (success == true) {
                 print("\(totalPhotos) photos have been found!")
@@ -105,13 +115,10 @@ class AlbumViewController: UIViewController, UICollectionViewDataSource, UIColle
     func configureCell(cell: PhotoCollectionViewCell, photo: Photo) {
         var cellImage = UIImage(named: "posterPlaceHolder")
         
-        //cell.textLabel!.text = photo.title
         cell.imageView!.image = nil
         cell.activityIndicator.hidden = true
         
-        //print("configure \(photo)")
-        
-        // Set the Movie Poster Image
+        // Set the Album Image
         if photo.imageURL == nil || photo.imageURL == "" {
             cellImage = UIImage(named: "noImage")
         } else if photo.albumImage != nil {
@@ -124,31 +131,23 @@ class AlbumViewController: UIViewController, UICollectionViewDataSource, UIColle
                 if (success == true) {
                     // update the model, so that the infrmation gets cashed
                     photo.albumImage = result
-                    //self.pin.pendingDownloads--
-                    //CoreDataStackManager.sharedInstance().saveContext()
-                    
-                    //if (self.pin.pendingDownloads == 0) {
-                    //    dispatch_async(dispatch_get_main_queue(), {
-                    //        let alertController = UIAlertController(title: "Alert", message:
-                    //            "All photos have been downloaded", preferredStyle: UIAlertControllerStyle.Alert)
-                    //        alertController.addAction(UIAlertAction(title: "Dismiss", style: UIAlertActionStyle.Default,handler: nil))
-                    //        self.presentViewController(alertController, animated: true, completion: nil)
-                    //
-                    //        self.newDownloadButton.hidden = false
-                    //    })
-                    //}
                     
                     dispatch_async(dispatch_get_main_queue(), {
                         cell.imageView!.image = result
                         
                         cell.activityIndicator.stopAnimating()
                         cell.activityIndicator.hidden = true
+                        
+                        self.downloadingCount--
+                        if self.downloadingCount == 0 {
+                            self.newDownloadButton.hidden = false
+                            self.enableUserInteraction = true
+                        }
                     })
                 } else {
                     print(errorString)
                 }
             }
-            //CoreDataStackManager.sharedInstance().saveContext()
             // This is the custom property on this cell. See TaskCancelingTableViewCell.swift for details.
             //cell.taskToCancelifCellIsReused = task
         }
@@ -179,6 +178,7 @@ class AlbumViewController: UIViewController, UICollectionViewDataSource, UIColle
     
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         let sectionInfo = self.fetchedResultsController.sections![section]
+        
         return sectionInfo.numberOfObjects
     }
     
@@ -195,16 +195,18 @@ class AlbumViewController: UIViewController, UICollectionViewDataSource, UIColle
     // MARK: - UICollectionViewDelegate
     
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
-        
-        // Delete image
-        let photo = self.fetchedResultsController.objectAtIndexPath(indexPath) as! Photo
-        self.pin.deletePhoto(photo)
-        CoreDataStackManager.sharedInstance().saveContext()
+        if (self.enableUserInteraction) {
+            // Delete image
+            let photo = self.fetchedResultsController.objectAtIndexPath(indexPath) as! Photo
+            self.pin.deletePhoto(photo)
+            CoreDataStackManager.sharedInstance().saveContext()
+        }
     }
     
     // MARK: - Fetched Results Controller Delegate
     
     func controllerWillChangeContent(controller: NSFetchedResultsController) {
+        print("Collection controllerWillChangeContent")
         insertedIndexPaths = [NSIndexPath]()
         deletedIndexPaths  = [NSIndexPath]()
         updatedIndexPaths  = [NSIndexPath]()
@@ -232,6 +234,7 @@ class AlbumViewController: UIViewController, UICollectionViewDataSource, UIColle
     
     func controllerDidChangeContent(controller: NSFetchedResultsController) {
         // Perform updates into the collectionView
+        print("Collection controllerDidChangeContent")
         collectionView.performBatchUpdates({() -> Void in
             for indexPath in self.insertedIndexPaths {
                 self.collectionView.insertItemsAtIndexPaths([indexPath])
